@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import { Player } from '../entities/Player.js';
+import { NPC } from '../entities/NPC.js';
 import { TILE_SIZE } from '../config.js';
 
 const MAP_COLS = 25;
@@ -44,7 +45,20 @@ export class WhisperingPath extends Phaser.Scene {
         this._buildTilemap();
 
         // ── Player ──
-        this.player = new Player(this, 12, 14);
+        this.player = new Player(this, 12, 9);
+
+        // ── NPC: Nenek Reike ──
+        this.npc = new NPC(this, 4, 5, {
+            name: 'Nenek Reike',
+            dialogText: 'Hei anak muda... kamu terlihat lelah. Mau singgah dulu?',
+            color: 0x8b4513,
+            radius: 48,
+        });
+
+        // ── Interaction state ──
+        this.dialogOpen = false;
+        this.interactKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.E);
+        this.spaceKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
 
         // ── World bounds ──
         this.physics.world.setBounds(0, 0, MAP_COLS * TILE_SIZE, MAP_ROWS * TILE_SIZE);
@@ -62,6 +76,29 @@ export class WhisperingPath extends Phaser.Scene {
      * ─────────────────────────────────────────── */
     update() {
         this.player.update();
+
+        // ── NPC proximity check ──
+        const pos = this.player.getPosition();
+        this.npc.update(pos);
+
+        // ── Interaction input ──
+        const eJustPressed = Phaser.Input.Keyboard.JustDown(this.interactKey);
+        const spaceJustPressed = Phaser.Input.Keyboard.JustDown(this.spaceKey);
+
+        if (this.dialogOpen) {
+            // Close dialog with E or Space
+            if (eJustPressed || spaceJustPressed) {
+                this.dialogOpen = false;
+                this.events.emit('dialog-close');
+            }
+        } else if (eJustPressed && this.npc.isNear) {
+            // Open dialog
+            this.dialogOpen = true;
+            this.events.emit('dialog-open', {
+                speaker: this.npc.name,
+                text: this.npc.dialogText,
+            });
+        }
     }
 
     /* ───────────────────────────────────────────
@@ -93,10 +130,10 @@ export class WhisperingPath extends Phaser.Scene {
     _buildTilemap() {
         // ── Tile index constants (pixel-by-pixel verified) ──
         const T = {
-            GRASS: 22,  // row 1, col 3 — hijau solid
-            DIRT:  64,  // row 3, col 7 — coklat tanah
+            GRASS: 36,  // row 1, col 17 — hijau solid benar
+            DIRT:  48,  // row 2, col 10 — solid coklat
             WATER: 20,  // row 1, col 1 — biru air
-            TREE: 123,
+            TREE: 199,  // row 10, col 9 — hijau gelap
             ROCK:  57,
             BUSH:  41,
         };
@@ -108,23 +145,23 @@ export class WhisperingPath extends Phaser.Scene {
         // prettier-ignore
         const MAP = [
         //  0    1    2    3    4    5    6    7    8    9   10   11   12   13   14   15   16   17   18   19   20   21   22   23   24
-            [ W,  W,  G, Tt,  G,  G,  G,  G,  G,  G,  G,  D,  D,  D,  G, Tt,  G,  G,  G,  G,  G,  G,  G,  G,  G],  // 0
-            [ W,  W,  G, Tt,  G,  G,  G,  G,  G,  G,  G,  D,  D,  D,  G, Tt,  G,  G,  G,  G,  G,  G,  G,  G,  G],  // 1
-            [ W,  W,  G, Tt,  G,  G,  G,  G,  G,  G,  G,  D,  D,  D,  G, Tt,  G,  G,  G,  G,  G,  G,  G,  G,  G],  // 2
-            [ W,  W,  G, Tt,  G,  G,  G,  G,  G,  G,  G,  D,  D,  D,  G, Tt,  G,  G,  G,  G,  G,  G,  G,  G,  G],  // 3
-            [ W,  W,  G, Tt,  G,  G,  G,  G,  G,  G,  G,  D,  D,  D,  G, Tt,  G,  G,  G,  G,  G,  G,  G,  G,  G],  // 4
-            [ W,  W,  G, Tt,  G,  G,  G,  G,  G,  G,  G,  D,  D,  D,  G, Tt,  G,  G,  G,  G,  G,  G,  G,  G,  G],  // 5
-            [ W,  W,  G, Tt,  G,  G,  G,  G,  G,  G,  G,  D,  D,  D,  G, Tt,  G,  G,  G,  G,  G,  G,  G,  G,  G],  // 6
-            [ W,  W,  G, Tt,  G,  G,  G,  G,  G,  G,  G,  D,  D,  D,  G, Tt,  G,  G,  G,  G,  G,  G,  G,  G,  G],  // 7
-            [ W,  W,  G, Tt,  G,  G,  G,  G,  G,  G,  G,  D,  D,  D,  G, Tt,  G,  G,  G,  G,  G,  G,  G,  G,  G],  // 8
-            [ W,  W,  G, Tt,  G,  G,  G,  G,  G,  G,  G,  D,  D,  D,  G, Tt,  G,  G,  G,  G,  G,  G,  G,  G,  G],  // 9
-            [ W,  W,  G, Tt,  G,  G,  G,  G,  G,  G,  G,  D,  D,  D,  G, Tt,  G,  G,  G,  G,  G,  G,  G,  G,  G],  // 10
-            [ W,  W,  G, Tt,  G,  G,  G,  G,  G,  G,  G,  D,  D,  D,  G, Tt,  G,  G,  G,  G,  G,  G,  G,  G,  G],  // 11
-            [ G,  G,  G, Tt,  G,  G,  G,  G,  G,  G,  G,  D,  D,  D,  G, Tt,  G,  G,  G,  G,  G,  G,  G,  G,  G],  // 12
-            [ G,  G,  G, Tt,  G,  G,  G,  G,  G,  G,  G,  D,  D,  D,  G, Tt,  G,  G,  G,  G,  G,  G,  G,  G,  G],  // 13
-            [ G,  G,  G, Tt,  G,  G,  G,  G,  G,  G,  G,  D,  D,  D,  G, Tt,  G,  G,  G,  G,  G,  G,  G,  G,  G],  // 14
-            [ G,  G,  G, Tt,  G,  G,  G,  G,  G,  G,  G,  D,  D,  D,  G, Tt,  G,  G,  G,  G,  G,  G,  G,  G,  G],  // 15
-            [ G,  G,  G, Tt,  G,  G,  G,  G,  G,  G,  G,  D,  D,  D,  G, Tt,  G,  G,  G,  G,  G,  G,  G,  G,  G],  // 16
+            [ G,  G,  G,  G,  G, Tt,  G,  G,  G,  G,  G,  D,  D, Tt,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G],  // 0
+            [ G,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G,  D,  D,  D,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G],  // 1
+            [ G,  G,  G,  G,  G, Tt,  G,  G,  G,  G,  G,  D,  D, Tt,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G],  // 2
+            [ G,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G,  D,  D,  D,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G],  // 3
+            [ G,  G,  G,  G,  G, Tt,  G,  G,  G,  G,  G,  D,  D, Tt,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G],  // 4
+            [ G,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G,  D,  D,  D,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G],  // 5
+            [ G,  G,  G,  G,  G, Tt,  G,  G,  G,  G,  G,  D,  D, Tt,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G],  // 6
+            [ G,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G,  D,  D,  D,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G],  // 7
+            [ G,  G,  G,  G,  G, Tt,  G,  G,  G,  G,  G,  D,  D, Tt,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G],  // 8
+            [ G,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G,  D,  D,  D,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G],  // 9
+            [ G,  G,  G,  G,  G, Tt,  G,  G,  G,  G,  G,  D,  D, Tt,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G],  // 10
+            [ G,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G,  D,  D,  D,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G],  // 11
+            [ G,  G,  G,  G,  G, Tt,  G,  G,  G,  G,  G,  D,  D, Tt,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G],  // 12
+            [ G,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G,  D,  D,  D,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G],  // 13
+            [ G,  G,  G,  G,  G, Tt,  G,  G,  G,  G,  G,  D,  D, Tt,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G],  // 14
+            [ G,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G,  D,  D,  D,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G],  // 15
+            [ G,  G,  G,  G,  G, Tt,  G,  G,  G,  G,  G,  D,  D, Tt,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G],  // 16
             [ G,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G,  D,  D,  D,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G],  // 17
         ];
 
@@ -154,7 +191,7 @@ export class WhisperingPath extends Phaser.Scene {
      *  collidable so the player can't walk through them.
      * ─────────────────────────────────────────── */
     _setupTreeColliders() {
-        const TREE_TRUNK = 123;
+        const TREE_TRUNK = 199;
 
         this.groundLayer.setCollision(TREE_TRUNK);
         this.physics.add.collider(this.player.sprite, this.groundLayer);
