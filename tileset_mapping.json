@@ -1,0 +1,8 @@
+{
+  "grass": 22,
+  "dirt": 64,
+  "water": 20,
+  "tree": 123,
+  "rock": 57,
+  "bush": 41
+}
