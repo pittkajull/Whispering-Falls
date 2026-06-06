@@ -48,7 +48,7 @@ export class WhisperingPath extends Phaser.Scene {
         this.player = new Player(this, 12, 9);
 
         // ── NPC: Nenek Reike ──
-        this.npc = new NPC(this, 4, 5, {
+        this.npc = new NPC(this, 3, 6, {
             name: 'Nenek Reike',
             dialogText: 'Hei anak muda... kamu terlihat lelah. Mau singgah dulu?',
             color: 0x8b4513,
@@ -145,23 +145,23 @@ export class WhisperingPath extends Phaser.Scene {
         // prettier-ignore
         const MAP = [
         //  0    1    2    3    4    5    6    7    8    9   10   11   12   13   14   15   16   17   18   19   20   21   22   23   24
-            [ G,  G,  G,  G,  G, Tt,  G,  G,  G,  G,  G,  D,  D, Tt,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G],  // 0
-            [ G,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G,  D,  D,  D,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G],  // 1
-            [ G,  G,  G,  G,  G, Tt,  G,  G,  G,  G,  G,  D,  D, Tt,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G],  // 2
-            [ G,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G,  D,  D,  D,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G],  // 3
-            [ G,  G,  G,  G,  G, Tt,  G,  G,  G,  G,  G,  D,  D, Tt,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G],  // 4
-            [ G,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G,  D,  D,  D,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G],  // 5
-            [ G,  G,  G,  G,  G, Tt,  G,  G,  G,  G,  G,  D,  D, Tt,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G],  // 6
-            [ G,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G,  D,  D,  D,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G],  // 7
-            [ G,  G,  G,  G,  G, Tt,  G,  G,  G,  G,  G,  D,  D, Tt,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G],  // 8
-            [ G,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G,  D,  D,  D,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G],  // 9
-            [ G,  G,  G,  G,  G, Tt,  G,  G,  G,  G,  G,  D,  D, Tt,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G],  // 10
-            [ G,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G,  D,  D,  D,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G],  // 11
-            [ G,  G,  G,  G,  G, Tt,  G,  G,  G,  G,  G,  D,  D, Tt,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G],  // 12
-            [ G,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G,  D,  D,  D,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G],  // 13
-            [ G,  G,  G,  G,  G, Tt,  G,  G,  G,  G,  G,  D,  D, Tt,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G],  // 14
-            [ G,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G,  D,  D,  D,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G],  // 15
-            [ G,  G,  G,  G,  G, Tt,  G,  G,  G,  G,  G,  D,  D, Tt,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G],  // 16
+            [ G,  W,  W,  G, Tt,  G,  G,  G,  G,  G,  G,  D,  D,  D,  G,  G, Tt,  G,  G,  G,  G,  G,  G,  G,  G],  // 0
+            [ G,  W,  W,  G,  G,  G,  G,  G,  G,  G,  G,  D,  D,  D,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G],  // 1
+            [ G,  W,  W,  G, Tt,  G,  G,  G,  B,  G,  G,  D,  D,  D,  G,  G, Tt,  G,  G,  G,  G,  G,  G,  G,  G],  // 2
+            [ G,  W,  W,  G,  G,  G,  G,  G,  G,  G,  G,  D,  D,  D,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G],  // 3
+            [ G,  W,  W,  G, Tt,  G,  R,  G,  G,  G,  G,  D,  D,  D,  G,  G, Tt,  G,  G,  G,  G,  G,  G,  G,  G],  // 4
+            [ G,  W,  W,  G,  G,  G,  G,  G,  G,  G,  G,  D,  D,  D,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G],  // 5
+            [ G,  W,  W,  G, Tt,  G,  G,  G,  G,  G,  G,  D,  D,  D,  G,  G, Tt,  G,  G,  G,  G,  G,  G,  G,  G],  // 6
+            [ G,  W,  W,  G,  G,  G,  G,  B,  G,  G,  G,  D,  D,  D,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G],  // 7
+            [ G,  W,  W,  G, Tt,  G,  G,  G,  G,  G,  G,  D,  D,  D,  G,  G, Tt,  G,  G,  G,  G,  G,  G,  G,  G],  // 8
+            [ G,  W,  W,  G,  G,  G,  G,  G,  G,  G,  G,  D,  D,  D,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G],  // 9
+            [ G,  W,  W,  G, Tt,  G,  G,  G,  G,  R,  G,  D,  D,  D,  G,  G, Tt,  G,  G,  G,  G,  G,  G,  G,  G],  // 10
+            [ G,  W,  W,  G,  G,  G,  G,  G,  G,  G,  G,  D,  D,  D,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G],  // 11
+            [ G,  W,  W,  G, Tt,  G,  G,  G,  B,  G,  G,  D,  D,  D,  G,  G, Tt,  G,  G,  G,  G,  G,  G,  G,  G],  // 12
+            [ G,  W,  W,  G,  G,  G,  G,  G,  G,  G,  G,  D,  D,  D,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G],  // 13
+            [ G,  W,  W,  G, Tt,  G,  R,  G,  G,  G,  G,  D,  D,  D,  G,  G, Tt,  G,  G,  G,  G,  G,  G,  G,  G],  // 14
+            [ G,  W,  W,  G,  G,  G,  G,  G,  G,  G,  G,  D,  D,  D,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G],  // 15
+            [ G,  W,  W,  G, Tt,  G,  G,  G,  G,  G,  G,  D,  D,  D,  G,  G, Tt,  G,  G,  G,  G,  G,  G,  G,  G],  // 16
             [ G,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G,  D,  D,  D,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G],  // 17
         ];
 
