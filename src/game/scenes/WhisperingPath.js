@@ -48,7 +48,7 @@ export class WhisperingPath extends Phaser.Scene {
         this.player = new Player(this, 12, 9);
 
         // ── NPC: Nenek Reike ──
-        this.npc = new NPC(this, 3, 6, {
+        this.npc = new NPC(this, 5, 5, {
             name: 'Nenek Reike',
             dialogText: 'Hei anak muda... kamu terlihat lelah. Mau singgah dulu?',
             color: 0x8b4513,
@@ -130,39 +130,42 @@ export class WhisperingPath extends Phaser.Scene {
     _buildTilemap() {
         // ── Tile index constants (pixel-by-pixel verified) ──
         const T = {
-            GRASS: 36,  // row 1, col 17 — hijau solid benar
-            DIRT:  48,  // row 2, col 10 — solid coklat
-            WATER: 20,  // row 1, col 1 — biru air
-            TREE: 199,  // row 10, col 9 — hijau gelap
-            ROCK:  58,  // row 3, col 1 — batu abu-abu
-            BUSH:  40,  // row 2, col 2 — semak hijau kecil
+            GRASS1:    36,  // hijau terang
+            GRASS2:    17,  // hijau agak gelap
+            GRASS_EDGE: 22, // tepi sungai
+            DIRT:      48,  // solid coklat
+            PATH_EDGE: 65,  // pinggiran jalan
+            WATER:     31,  // biru solid cerah
+            TREE:     199,  // hijau gelap (pohon)
+            ROCK:      58,  // batu abu-abu
+            BUSH:      40,  // semak hijau kecil
         };
 
         // ── Tile index map (row-major, 25×18) ──
-        // G = GRASS, W = WATER, D = DIRT, Tt = TREE, R = ROCK, B = BUSH
-        const G = T.GRASS, W = T.WATER, D = T.DIRT,
+        const G1 = T.GRASS1, G2 = T.GRASS2, Ge = T.GRASS_EDGE,
+              W = T.WATER, D = T.DIRT, Pe = T.PATH_EDGE,
               Tt = T.TREE, R = T.ROCK, B = T.BUSH;
         // prettier-ignore
         const MAP = [
         //  0    1    2    3    4    5    6    7    8    9   10   11   12   13   14   15   16   17   18   19   20   21   22   23   24
-            [ G,  W,  W,  G, Tt,  G,  G,  G,  G,  G,  G,  D,  D,  D,  G,  G, Tt,  G,  G,  G,  G,  G,  G,  G,  G],  // 0
-            [ G,  W,  W,  G,  G,  G,  G,  G,  G,  G,  G,  D,  D,  D,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G],  // 1
-            [ G,  W,  W,  G, Tt,  G,  G,  G,  G,  G,  G,  D,  D,  D,  G,  G, Tt,  G,  G,  G,  G,  G,  G,  G,  G],  // 2
-            [ G,  W,  W,  G,  G,  G,  G,  G,  G,  G,  G,  D,  D,  D,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G],  // 3
-            [ G,  W,  W,  G, Tt,  G,  G,  G,  G,  G,  G,  D,  D,  D,  G,  G, Tt,  G,  G,  G,  G,  G,  G,  G,  G],  // 4
-            [ G,  W,  W,  G,  G,  G,  G,  G,  G,  G,  G,  D,  D,  D,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G],  // 5
-            [ G,  W,  W,  G, Tt,  G,  G,  G,  G,  G,  G,  D,  D,  D,  G,  G, Tt,  G,  G,  G,  G,  G,  G,  G,  G],  // 6
-            [ G,  W,  W,  G,  G,  G,  G,  G,  G,  G,  G,  D,  D,  D,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G],  // 7
-            [ G,  W,  W,  G, Tt,  G,  G,  G,  G,  G,  G,  D,  D,  D,  G,  G, Tt,  G,  G,  G,  G,  G,  G,  G,  G],  // 8
-            [ G,  W,  W,  G,  G,  G,  G,  G,  G,  G,  G,  D,  D,  D,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G],  // 9
-            [ G,  W,  W,  G, Tt,  G,  G,  G,  G,  G,  G,  D,  D,  D,  G,  G, Tt,  G,  G,  G,  G,  G,  G,  G,  G],  // 10
-            [ G,  W,  W,  G,  G,  G,  G,  G,  G,  G,  G,  D,  D,  D,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G],  // 11
-            [ G,  W,  W,  G, Tt,  G,  G,  G,  G,  G,  G,  D,  D,  D,  G,  G, Tt,  G,  G,  G,  G,  G,  G,  G,  G],  // 12
-            [ G,  W,  W,  G,  G,  G,  G,  G,  G,  G,  G,  D,  D,  D,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G],  // 13
-            [ G,  W,  W,  G, Tt,  G,  G,  G,  G,  G,  G,  D,  D,  D,  G,  G, Tt,  G,  G,  G,  G,  G,  G,  G,  G],  // 14
-            [ G,  W,  W,  G,  G,  G,  G,  G,  G,  G,  G,  D,  D,  D,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G],  // 15
-            [ G,  W,  W,  G, Tt,  G,  G,  G,  G,  G,  G,  D,  D,  D,  G,  G, Tt,  G,  G,  G,  G,  G,  G,  G,  G],  // 16
-            [ G,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G,  D,  D,  D,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G],  // 17
+            [G1,  W,  W, Ge, Tt, Tt, G2,  G1, Tt, G2, Pe,  D,  D,  D, Pe, Tt, Tt, G1, G2, G1, G2, G1, G2, G1, G2],  // 0
+            [G2,  W,  W, Ge, Tt,  G1, G2,  G1,  G2, G1, Pe,  D,  D,  D, Pe,  G1, Tt, G2, G1, G2, G1, G2, G1, G2, G1],  // 1
+            [G1,  W,  W, Ge, Tt, Tt, G1,  G2,  G1, G2, Pe,  D,  D,  D, Pe, Tt, Tt, G1, G2, G1, G2, G1, G2, G1, G2],  // 2
+            [G2,  W,  W, Ge, Tt,  G2, G1,  G1,  G2, G1, Pe,  D,  D,  D, Pe,  G2, Tt, G2, G1, G2, G1, G2, G1, G2, G1],  // 3
+            [G1,  W,  W, Ge, Tt, Tt, G2,  G1, Tt, G2, Pe,  D,  D,  D, Pe, Tt, Tt, G1, G2, G1, G2, G1, G2, G1, G2],  // 4
+            [G2,  W,  W, Ge, Tt,  G1, G2,  G1,  G2, G1, Pe,  D,  D,  D, Pe,  G1, Tt, G2, G1, G2, G1, G2, G1, G2, G1],  // 5
+            [G1,  W,  W, Ge, Tt, Tt, G1,  G2, Tt, G2, Pe,  D,  D,  D, Pe, Tt, Tt, G1, G2, G1, G2, G1, G2, G1, G2],  // 6
+            [G2,  W,  W, Ge, Tt,  G2, G1,  G1,  G2, G1, Pe,  D,  D,  D, Pe,  G2, Tt, G2, G1, G2, G1, G2, G1, G2, G1],  // 7
+            [G1,  W,  W, Ge, Tt, Tt, G2,  G1, Tt, G2, Pe,  D,  D,  D, Pe, Tt, Tt, G1, G2, G1, G2, G1, G2, G1, G2],  // 8
+            [G2,  W,  W, Ge, Tt,  G1, G2,  G1,  G2, G1, Pe,  D,  D,  D, Pe,  G1, Tt, G2, G1, G2, G1, G2, G1, G2, G1],  // 9
+            [G1,  W,  W, Ge, Tt, Tt, G1,  G2, Tt, G2, Pe,  D,  D,  D, Pe, Tt, Tt, G1, G2, G1, G2, G1, G2, G1, G2],  // 10
+            [G2,  W,  W, Ge, Tt,  G2, G1,  G1,  G2, G1, Pe,  D,  D,  D, Pe,  G2, Tt, G2, G1, G2, G1, G2, G1, G2, G1],  // 11
+            [G1,  W,  W, Ge, Tt, Tt, G2,  G1, Tt, G2, Pe,  D,  D,  D, Pe, Tt, Tt, G1, G2, G1, G2, G1, G2, G1, G2],  // 12
+            [G2,  W,  W, Ge, Tt,  G1, G2,  G1,  G2, G1, Pe,  D,  D,  D, Pe,  G1, Tt, G2, G1, G2, G1, G2, G1, G2, G1],  // 13
+            [G1,  W,  W, Ge, Tt, Tt, G1,  G2, Tt, G2, Pe,  D,  D,  D, Pe, Tt, Tt, G1, G2, G1, G2, G1, G2, G1, G2],  // 14
+            [G2,  W,  W, Ge, Tt,  G2, G1,  G1,  G2, G1, Pe,  D,  D,  D, Pe,  G2, Tt, G2, G1, G2, G1, G2, G1, G2, G1],  // 15
+            [G1,  W,  W, Ge, Tt, Tt, G2,  G1, Tt, G2, Pe,  D,  D,  D, Pe, Tt, Tt, G1, G2, G1, G2, G1, G2, G1, G2],  // 16
+            [G2, G1, G2, G1, G2, G1, G2, G1, G2, G1, G2,  D,  D,  D, G1, G2, G1, G2, G1, G2, G1, G2, G1, G2, G1],  // 17
         ];
 
         // ── Build the tilemap ──
