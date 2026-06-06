@@ -134,8 +134,8 @@ export class WhisperingPath extends Phaser.Scene {
             DIRT:  48,  // row 2, col 10 — solid coklat
             WATER: 20,  // row 1, col 1 — biru air
             TREE: 199,  // row 10, col 9 — hijau gelap
-            ROCK:  89,  // abu-abu natural, row 4 col 13
-            BUSH: 199,  // hijau gelap, tree kecil
+            ROCK:  58,  // row 3, col 1 — batu abu-abu
+            BUSH:  40,  // row 2, col 2 — semak hijau kecil
         };
 
         // ── Tile index map (row-major, 25×18) ──
@@ -147,19 +147,19 @@ export class WhisperingPath extends Phaser.Scene {
         //  0    1    2    3    4    5    6    7    8    9   10   11   12   13   14   15   16   17   18   19   20   21   22   23   24
             [ G,  W,  W,  G, Tt,  G,  G,  G,  G,  G,  G,  D,  D,  D,  G,  G, Tt,  G,  G,  G,  G,  G,  G,  G,  G],  // 0
             [ G,  W,  W,  G,  G,  G,  G,  G,  G,  G,  G,  D,  D,  D,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G],  // 1
-            [ G,  W,  W,  G, Tt,  G,  G,  G,  B,  G,  G,  D,  D,  D,  G,  G, Tt,  G,  G,  G,  G,  G,  G,  G,  G],  // 2
+            [ G,  W,  W,  G, Tt,  G,  G,  G,  G,  G,  G,  D,  D,  D,  G,  G, Tt,  G,  G,  G,  G,  G,  G,  G,  G],  // 2
             [ G,  W,  W,  G,  G,  G,  G,  G,  G,  G,  G,  D,  D,  D,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G],  // 3
-            [ G,  W,  W,  G, Tt,  G,  R,  G,  G,  G,  G,  D,  D,  D,  G,  G, Tt,  G,  G,  G,  G,  G,  G,  G,  G],  // 4
+            [ G,  W,  W,  G, Tt,  G,  G,  G,  G,  G,  G,  D,  D,  D,  G,  G, Tt,  G,  G,  G,  G,  G,  G,  G,  G],  // 4
             [ G,  W,  W,  G,  G,  G,  G,  G,  G,  G,  G,  D,  D,  D,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G],  // 5
             [ G,  W,  W,  G, Tt,  G,  G,  G,  G,  G,  G,  D,  D,  D,  G,  G, Tt,  G,  G,  G,  G,  G,  G,  G,  G],  // 6
-            [ G,  W,  W,  G,  G,  G,  G,  B,  G,  G,  G,  D,  D,  D,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G],  // 7
+            [ G,  W,  W,  G,  G,  G,  G,  G,  G,  G,  G,  D,  D,  D,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G],  // 7
             [ G,  W,  W,  G, Tt,  G,  G,  G,  G,  G,  G,  D,  D,  D,  G,  G, Tt,  G,  G,  G,  G,  G,  G,  G,  G],  // 8
             [ G,  W,  W,  G,  G,  G,  G,  G,  G,  G,  G,  D,  D,  D,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G],  // 9
-            [ G,  W,  W,  G, Tt,  G,  G,  G,  G,  R,  G,  D,  D,  D,  G,  G, Tt,  G,  G,  G,  G,  G,  G,  G,  G],  // 10
+            [ G,  W,  W,  G, Tt,  G,  G,  G,  G,  G,  G,  D,  D,  D,  G,  G, Tt,  G,  G,  G,  G,  G,  G,  G,  G],  // 10
             [ G,  W,  W,  G,  G,  G,  G,  G,  G,  G,  G,  D,  D,  D,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G],  // 11
-            [ G,  W,  W,  G, Tt,  G,  G,  G,  B,  G,  G,  D,  D,  D,  G,  G, Tt,  G,  G,  G,  G,  G,  G,  G,  G],  // 12
+            [ G,  W,  W,  G, Tt,  G,  G,  G,  G,  G,  G,  D,  D,  D,  G,  G, Tt,  G,  G,  G,  G,  G,  G,  G,  G],  // 12
             [ G,  W,  W,  G,  G,  G,  G,  G,  G,  G,  G,  D,  D,  D,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G],  // 13
-            [ G,  W,  W,  G, Tt,  G,  R,  G,  G,  G,  G,  D,  D,  D,  G,  G, Tt,  G,  G,  G,  G,  G,  G,  G,  G],  // 14
+            [ G,  W,  W,  G, Tt,  G,  G,  G,  G,  G,  G,  D,  D,  D,  G,  G, Tt,  G,  G,  G,  G,  G,  G,  G,  G],  // 14
             [ G,  W,  W,  G,  G,  G,  G,  G,  G,  G,  G,  D,  D,  D,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G],  // 15
             [ G,  W,  W,  G, Tt,  G,  G,  G,  G,  G,  G,  D,  D,  D,  G,  G, Tt,  G,  G,  G,  G,  G,  G,  G,  G],  // 16
             [ G,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G,  D,  D,  D,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G,  G],  // 17
