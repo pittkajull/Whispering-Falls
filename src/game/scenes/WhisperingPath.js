@@ -134,8 +134,8 @@ export class WhisperingPath extends Phaser.Scene {
             DIRT:  48,  // row 2, col 10 — solid coklat
             WATER: 20,  // row 1, col 1 — biru air
             TREE: 199,  // row 10, col 9 — hijau gelap
-            ROCK:  57,
-            BUSH:  41,
+            ROCK:  89,  // abu-abu natural, row 4 col 13
+            BUSH: 199,  // hijau gelap, tree kecil
         };
 
         // ── Tile index map (row-major, 25×18) ──
