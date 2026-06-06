@@ -35,6 +35,10 @@ export class WhisperingPath extends Phaser.Scene {
         this.load.spritesheet('idle_down', `${BASE}/Idle_Base/Idle_Down-Sheet.png`, { frameWidth: 64, frameHeight: 64 });
         this.load.spritesheet('idle_side', `${BASE}/Idle_Base/Idle_Side-Sheet.png`, { frameWidth: 64, frameHeight: 64 });
         this.load.spritesheet('idle_up',   `${BASE}/Idle_Base/Idle_Up-Sheet.png`,   { frameWidth: 64, frameHeight: 64 });
+
+        // ── Animated tileset sprites ──
+        this.load.spritesheet('water_anim', '/assets/tilesets/limezu/SERENE_VILLAGE_REVAMPED/Animated stuff/water_waves_16x16.png', { frameWidth: 16, frameHeight: 16 });
+        this.load.spritesheet('campfire_anim', '/assets/tilesets/limezu/SERENE_VILLAGE_REVAMPED/Animated stuff/campfire_16x16.png', { frameWidth: 16, frameHeight: 16 });
     }
 
     /* ───────────────────────────────────────────
@@ -43,6 +47,7 @@ export class WhisperingPath extends Phaser.Scene {
     create() {
         this._createAnimations();
         this._buildTilemap();
+        this._spawnAnimatedTiles();
 
         // ── Player ──
         this.player = new Player(this, 12, 9);
@@ -116,6 +121,10 @@ export class WhisperingPath extends Phaser.Scene {
         this.anims.create({ key: 'idle_down', frames: this.anims.generateFrameNumbers('idle_down', { start: 0, end: 3 }), frameRate: 4, repeat: -1 });
         this.anims.create({ key: 'idle_side', frames: this.anims.generateFrameNumbers('idle_side', { start: 0, end: 3 }), frameRate: 4, repeat: -1 });
         this.anims.create({ key: 'idle_up',   frames: this.anims.generateFrameNumbers('idle_up',   { start: 0, end: 3 }), frameRate: 4, repeat: -1 });
+
+        // Animated tiles
+        this.anims.create({ key: 'water_anim', frames: this.anims.generateFrameNumbers('water_anim', { start: 0, end: 13 }), frameRate: 8, repeat: -1 });
+        this.anims.create({ key: 'campfire_anim', frames: this.anims.generateFrameNumbers('campfire_anim', { start: 0, end: 3 }), frameRate: 6, repeat: -1 });
     }
 
     /* ───────────────────────────────────────────
@@ -187,6 +196,32 @@ export class WhisperingPath extends Phaser.Scene {
 
         this.groundLayer = layer;
         this.tileMap = map;
+    }
+
+    /* ───────────────────────────────────────────
+     *  Animated tiles — water waves + campfire
+     * ─────────────────────────────────────────── */
+    _spawnAnimatedTiles() {
+        const WATER_COL_1 = 1;
+        const WATER_COL_2 = 2;
+
+        // ── Water waves on col 1-2, every row ──
+        for (let row = 0; row < MAP_ROWS - 1; row++) { // skip row 17 (no water)
+            for (const col of [WATER_COL_1, WATER_COL_2]) {
+                const worldX = col * TILE_SIZE + TILE_SIZE / 2;
+                const worldY = row * TILE_SIZE + TILE_SIZE / 2;
+                const water = this.add.sprite(worldX, worldY, 'water_anim');
+                water.play('water_anim');
+                water.setDepth(row * TILE_SIZE + TILE_SIZE / 2); // depth sort by row
+            }
+        }
+
+        // ── Campfire near Nenek Reike (col 6, row 5) ──
+        const fireX = 6 * TILE_SIZE + TILE_SIZE / 2;
+        const fireY = 5 * TILE_SIZE + TILE_SIZE / 2;
+        const campfire = this.add.sprite(fireX, fireY, 'campfire_anim');
+        campfire.play('campfire_anim');
+        campfire.setDepth(5 * TILE_SIZE + TILE_SIZE / 2);
     }
 
     /* ───────────────────────────────────────────
