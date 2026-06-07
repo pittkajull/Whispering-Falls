@@ -53,7 +53,7 @@ export class WhisperingPath extends Phaser.Scene {
         this._spawnAnimatedTiles();
 
         // ── Player ──
-        this.player = new Player(this, 12, 9);
+        this.player = new Player(this, 12, 8);
 
         // ── NPC: Nenek Reike ──
         this.npc = new NPC(this, 5, 5, {
@@ -70,18 +70,18 @@ export class WhisperingPath extends Phaser.Scene {
 
         // ── Tree sprites ──
         const trees = this.physics.add.staticGroup();
-        const treePositionsLeft = [64,128,192,256,320,384,448,512];
-        const treePositionsRight = [96,160,224,288,352,416,480];
+        const treePositionsLeft = [80, 176, 272, 368, 464];
+        const treePositionsRight = [128, 224, 320, 416];
 
         treePositionsLeft.forEach(y => {
             const t = trees.create(96, y, 'tree');
-            t.setScale(2);
+            t.setScale(1.5);
             t.body.setSize(20, 12);
             t.body.setOffset(6, 36);
         });
         treePositionsRight.forEach(y => {
             const t = trees.create(240, y, 'tree');
-            t.setScale(2);
+            t.setScale(1.5);
             t.body.setSize(20, 12);
             t.body.setOffset(6, 36);
         });
