@@ -56,7 +56,7 @@ export class WhisperingPath extends Phaser.Scene {
         this.player = new Player(this, 12, 8);
 
         // ── NPC: Nenek Reike ──
-        this.npc = new NPC(this, 12, 16, {
+        this.npc = new NPC(this, 19, 16, {
             name: 'Nenek Reike',
             dialogText: 'Hei anak muda... kamu terlihat lelah. Mau singgah dulu?',
             color: 0x8b4513,
@@ -105,7 +105,19 @@ export class WhisperingPath extends Phaser.Scene {
 
         // ── NPC proximity check ──
         const pos = this.player.getPosition();
-        this.npc.update(pos);
+        const dx = pos.x - this.npc.sprite.x;
+        const dy = pos.y - this.npc.sprite.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        const withinRange = dist < 48;
+
+        // ── Interaction hint: only show when truly within radius ──
+        if (withinRange && !this.npc.isNear) {
+            this.npc.isNear = true;
+            this.events.emit('npc-near', { name: this.npc.name, dialogText: this.npc.dialogText });
+        } else if (!withinRange && this.npc.isNear) {
+            this.npc.isNear = false;
+            this.events.emit('npc-far', { name: this.npc.name });
+        }
 
         // ── Interaction input ──
         const eJustPressed = Phaser.Input.Keyboard.JustDown(this.interactKey);
@@ -117,8 +129,8 @@ export class WhisperingPath extends Phaser.Scene {
                 this.dialogOpen = false;
                 this.events.emit('dialog-close');
             }
-        } else if (eJustPressed && this.npc.isNear) {
-            // Open dialog
+        } else if (eJustPressed && withinRange) {
+            // Open dialog — only if truly within 48px
             this.dialogOpen = true;
             this.events.emit('dialog-open', {
                 speaker: this.npc.name,
@@ -166,14 +178,11 @@ export class WhisperingPath extends Phaser.Scene {
             DIRT:      48,  // solid coklat
             PATH_EDGE: 65,  // pinggiran jalan
             WATER:     31,  // biru solid cerah
-            ROCK:      58,  // batu abu-abu
-            BUSH:      40,  // semak hijau kecil
         };
 
         // ── Tile index map (row-major, 25×18) ──
         const G1 = T.GRASS1, G2 = T.GRASS2, Ge = T.GRASS_EDGE,
-              W = T.WATER, D = T.DIRT, Pe = T.PATH_EDGE,
-              R = T.ROCK, B = T.BUSH;
+              W = T.WATER, D = T.DIRT, Pe = T.PATH_EDGE;
         // prettier-ignore
         const MAP = [
         //  0    1    2    3    4    5    6    7    8    9   10   11   12   13   14   15   16   17   18   19   20   21   22   23   24
@@ -237,7 +246,7 @@ export class WhisperingPath extends Phaser.Scene {
         }
 
         // ── Campfire near Nenek Reike ──
-        const fireX = 10 * TILE_SIZE + TILE_SIZE / 2;
+        const fireX = 20 * TILE_SIZE + TILE_SIZE / 2;
         const fireY = 17 * TILE_SIZE + TILE_SIZE / 2;
         const campfire = this.add.sprite(fireX, fireY, 'campfire_anim');
         campfire.play('campfire_anim');
