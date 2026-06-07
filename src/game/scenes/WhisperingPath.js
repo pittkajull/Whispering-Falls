@@ -39,6 +39,9 @@ export class WhisperingPath extends Phaser.Scene {
         // ── Animated tileset sprites ──
         this.load.spritesheet('water_anim', '/assets/tilesets/limezu/SERENE_VILLAGE_REVAMPED/Animated stuff/water_waves_16x16.png', { frameWidth: 16, frameHeight: 16 });
         this.load.spritesheet('campfire_anim', '/assets/tilesets/limezu/SERENE_VILLAGE_REVAMPED/Animated stuff/campfire_16x16.png', { frameWidth: 16, frameHeight: 16 });
+
+        // ── Tree sprite ──
+        this.load.image('tree', '/assets/tree_sprite.png');
     }
 
     /* ───────────────────────────────────────────
@@ -65,15 +68,32 @@ export class WhisperingPath extends Phaser.Scene {
         this.interactKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.E);
         this.spaceKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
 
+        // ── Tree sprites ──
+        const trees = this.physics.add.staticGroup();
+        const treePositionsLeft = [64,128,192,256,320,384,448,512];
+        const treePositionsRight = [96,160,224,288,352,416,480];
+
+        treePositionsLeft.forEach(y => {
+            const t = trees.create(96, y, 'tree');
+            t.setScale(2);
+            t.body.setSize(20, 12);
+            t.body.setOffset(6, 36);
+        });
+        treePositionsRight.forEach(y => {
+            const t = trees.create(240, y, 'tree');
+            t.setScale(2);
+            t.body.setSize(20, 12);
+            t.body.setOffset(6, 36);
+        });
+
+        this.physics.add.collider(this.player.sprite, trees);
+
         // ── World bounds ──
         this.physics.world.setBounds(0, 0, MAP_COLS * TILE_SIZE, MAP_ROWS * TILE_SIZE);
 
         // ── Camera ──
         this.cameras.main.setBounds(0, 0, MAP_COLS * TILE_SIZE, MAP_ROWS * TILE_SIZE);
         this.cameras.main.startFollow(this.player.sprite, true, 0.12, 0.12);
-
-        // ── Colliders for tree tiles ──
-        this._setupTreeColliders();
     }
 
     /* ───────────────────────────────────────────
@@ -145,7 +165,6 @@ export class WhisperingPath extends Phaser.Scene {
             DIRT:      48,  // solid coklat
             PATH_EDGE: 65,  // pinggiran jalan
             WATER:     31,  // biru solid cerah
-            TREE:     199,  // hijau gelap (pohon)
             ROCK:      58,  // batu abu-abu
             BUSH:      40,  // semak hijau kecil
         };
@@ -153,27 +172,27 @@ export class WhisperingPath extends Phaser.Scene {
         // ── Tile index map (row-major, 25×18) ──
         const G1 = T.GRASS1, G2 = T.GRASS2, Ge = T.GRASS_EDGE,
               W = T.WATER, D = T.DIRT, Pe = T.PATH_EDGE,
-              Tt = T.TREE, R = T.ROCK, B = T.BUSH;
+              R = T.ROCK, B = T.BUSH;
         // prettier-ignore
         const MAP = [
         //  0    1    2    3    4    5    6    7    8    9   10   11   12   13   14   15   16   17   18   19   20   21   22   23   24
-            [G1,  W,  W, Ge, Tt, Tt, G2,  G1, Tt, G2, Pe,  D,  D,  D, Pe, Tt, Tt, G1, G2, G1, G2, G1, G2, G1, G2],  // 0
-            [G2,  W,  W, Ge, Tt,  G1, G2,  G1,  G2, G1, Pe,  D,  D,  D, Pe,  G1, Tt, G2, G1, G2, G1, G2, G1, G2, G1],  // 1
-            [G1,  W,  W, Ge, Tt, Tt, G1,  G2,  G1, G2, Pe,  D,  D,  D, Pe, Tt, Tt, G1, G2, G1, G2, G1, G2, G1, G2],  // 2
-            [G2,  W,  W, Ge, Tt,  G2, G1,  G1,  G2, G1, Pe,  D,  D,  D, Pe,  G2, Tt, G2, G1, G2, G1, G2, G1, G2, G1],  // 3
-            [G1,  W,  W, Ge, Tt, Tt, G2,  G1, Tt, G2, Pe,  D,  D,  D, Pe, Tt, Tt, G1, G2, G1, G2, G1, G2, G1, G2],  // 4
-            [G2,  W,  W, Ge, Tt,  G1, G2,  G1,  G2, G1, Pe,  D,  D,  D, Pe,  G1, Tt, G2, G1, G2, G1, G2, G1, G2, G1],  // 5
-            [G1,  W,  W, Ge, Tt, Tt, G1,  G2, Tt, G2, Pe,  D,  D,  D, Pe, Tt, Tt, G1, G2, G1, G2, G1, G2, G1, G2],  // 6
-            [G2,  W,  W, Ge, Tt,  G2, G1,  G1,  G2, G1, Pe,  D,  D,  D, Pe,  G2, Tt, G2, G1, G2, G1, G2, G1, G2, G1],  // 7
-            [G1,  W,  W, Ge, Tt, Tt, G2,  G1, Tt, G2, Pe,  D,  D,  D, Pe, Tt, Tt, G1, G2, G1, G2, G1, G2, G1, G2],  // 8
-            [G2,  W,  W, Ge, Tt,  G1, G2,  G1,  G2, G1, Pe,  D,  D,  D, Pe,  G1, Tt, G2, G1, G2, G1, G2, G1, G2, G1],  // 9
-            [G1,  W,  W, Ge, Tt, Tt, G1,  G2, Tt, G2, Pe,  D,  D,  D, Pe, Tt, Tt, G1, G2, G1, G2, G1, G2, G1, G2],  // 10
-            [G2,  W,  W, Ge, Tt,  G2, G1,  G1,  G2, G1, Pe,  D,  D,  D, Pe,  G2, Tt, G2, G1, G2, G1, G2, G1, G2, G1],  // 11
-            [G1,  W,  W, Ge, Tt, Tt, G2,  G1, Tt, G2, Pe,  D,  D,  D, Pe, Tt, Tt, G1, G2, G1, G2, G1, G2, G1, G2],  // 12
-            [G2,  W,  W, Ge, Tt,  G1, G2,  G1,  G2, G1, Pe,  D,  D,  D, Pe,  G1, Tt, G2, G1, G2, G1, G2, G1, G2, G1],  // 13
-            [G1,  W,  W, Ge, Tt, Tt, G1,  G2, Tt, G2, Pe,  D,  D,  D, Pe, Tt, Tt, G1, G2, G1, G2, G1, G2, G1, G2],  // 14
-            [G2,  W,  W, Ge, Tt,  G2, G1,  G1,  G2, G1, Pe,  D,  D,  D, Pe,  G2, Tt, G2, G1, G2, G1, G2, G1, G2, G1],  // 15
-            [G1,  W,  W, Ge, Tt, Tt, G2,  G1, Tt, G2, Pe,  D,  D,  D, Pe, Tt, Tt, G1, G2, G1, G2, G1, G2, G1, G2],  // 16
+            [G1,  W,  W, Ge, G2, G2, G2,  G1, G2, G2, Pe,  D,  D,  D, Pe, G2, G2, G1, G2, G1, G2, G1, G2, G1, G2],  // 0
+            [G2,  W,  W, Ge, G2,  G1, G2,  G1,  G2, G1, Pe,  D,  D,  D, Pe,  G1, G2, G2, G1, G2, G1, G2, G1, G2, G1],  // 1
+            [G1,  W,  W, Ge, G2, G2, G1,  G2,  G1, G2, Pe,  D,  D,  D, Pe, G2, G2, G1, G2, G1, G2, G1, G2, G1, G2],  // 2
+            [G2,  W,  W, Ge, G2,  G2, G1,  G1,  G2, G1, Pe,  D,  D,  D, Pe,  G2, G2, G2, G1, G2, G1, G2, G1, G2, G1],  // 3
+            [G1,  W,  W, Ge, G2, G2, G2,  G1, G2, G2, Pe,  D,  D,  D, Pe, G2, G2, G1, G2, G1, G2, G1, G2, G1, G2],  // 4
+            [G2,  W,  W, Ge, G2,  G1, G2,  G1,  G2, G1, Pe,  D,  D,  D, Pe,  G1, G2, G2, G1, G2, G1, G2, G1, G2, G1],  // 5
+            [G1,  W,  W, Ge, G2, G2, G1,  G2, G2, G2, Pe,  D,  D,  D, Pe, G2, G2, G1, G2, G1, G2, G1, G2, G1, G2],  // 6
+            [G2,  W,  W, Ge, G2,  G2, G1,  G1,  G2, G1, Pe,  D,  D,  D, Pe,  G2, G2, G2, G1, G2, G1, G2, G1, G2, G1],  // 7
+            [G1,  W,  W, Ge, G2, G2, G2,  G1, G2, G2, Pe,  D,  D,  D, Pe, G2, G2, G1, G2, G1, G2, G1, G2, G1, G2],  // 8
+            [G2,  W,  W, Ge, G2,  G1, G2,  G1,  G2, G1, Pe,  D,  D,  D, Pe,  G1, G2, G2, G1, G2, G1, G2, G1, G2, G1],  // 9
+            [G1,  W,  W, Ge, G2, G2, G1,  G2, G2, G2, Pe,  D,  D,  D, Pe, G2, G2, G1, G2, G1, G2, G1, G2, G1, G2],  // 10
+            [G2,  W,  W, Ge, G2,  G2, G1,  G1,  G2, G1, Pe,  D,  D,  D, Pe,  G2, G2, G2, G1, G2, G1, G2, G1, G2, G1],  // 11
+            [G1,  W,  W, Ge, G2, G2, G2,  G1, G2, G2, Pe,  D,  D,  D, Pe, G2, G2, G1, G2, G1, G2, G1, G2, G1, G2],  // 12
+            [G2,  W,  W, Ge, G2,  G1, G2,  G1,  G2, G1, Pe,  D,  D,  D, Pe,  G1, G2, G2, G1, G2, G1, G2, G1, G2, G1],  // 13
+            [G1,  W,  W, Ge, G2, G2, G1,  G2, G2, G2, Pe,  D,  D,  D, Pe, G2, G2, G1, G2, G1, G2, G1, G2, G1, G2],  // 14
+            [G2,  W,  W, Ge, G2,  G2, G1,  G1,  G2, G1, Pe,  D,  D,  D, Pe,  G2, G2, G2, G1, G2, G1, G2, G1, G2, G1],  // 15
+            [G1,  W,  W, Ge, G2, G2, G2,  G1, G2, G2, Pe,  D,  D,  D, Pe, G2, G2, G1, G2, G1, G2, G1, G2, G1, G2],  // 16
             [G2, G1, G2, G1, G2, G1, G2, G1, G2, G1, G2,  D,  D,  D, G1, G2, G1, G2, G1, G2, G1, G2, G1, G2, G1],  // 17
         ];
 
@@ -224,14 +243,4 @@ export class WhisperingPath extends Phaser.Scene {
         campfire.setDepth(5 * TILE_SIZE + TILE_SIZE / 2);
     }
 
-    /* ───────────────────────────────────────────
-     *  Tree colliders — mark TREE_TRUNK tiles as
-     *  collidable so the player can't walk through them.
-     * ─────────────────────────────────────────── */
-    _setupTreeColliders() {
-        const TREE_TRUNK = 199;
-
-        this.groundLayer.setCollision(TREE_TRUNK);
-        this.physics.add.collider(this.player.sprite, this.groundLayer);
-    }
 }
