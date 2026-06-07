@@ -56,7 +56,7 @@ export class WhisperingPath extends Phaser.Scene {
         this.player = new Player(this, 12, 8);
 
         // ── NPC: Nenek Reike ──
-        this.npc = new NPC(this, 5, 5, {
+        this.npc = new NPC(this, 12, 16, {
             name: 'Nenek Reike',
             dialogText: 'Hei anak muda... kamu terlihat lelah. Mau singgah dulu?',
             color: 0x8b4513,
@@ -90,6 +90,7 @@ export class WhisperingPath extends Phaser.Scene {
 
         // ── World bounds ──
         this.physics.world.setBounds(0, 0, MAP_COLS * TILE_SIZE, MAP_ROWS * TILE_SIZE);
+        this.physics.world.drawDebug = false;
 
         // ── Camera ──
         this.cameras.main.setBounds(0, 0, MAP_COLS * TILE_SIZE, MAP_ROWS * TILE_SIZE);
@@ -235,12 +236,12 @@ export class WhisperingPath extends Phaser.Scene {
             }
         }
 
-        // ── Campfire near Nenek Reike (col 6, row 5) ──
-        const fireX = 6 * TILE_SIZE + TILE_SIZE / 2;
-        const fireY = 5 * TILE_SIZE + TILE_SIZE / 2;
+        // ── Campfire near Nenek Reike ──
+        const fireX = 10 * TILE_SIZE + TILE_SIZE / 2;
+        const fireY = 17 * TILE_SIZE + TILE_SIZE / 2;
         const campfire = this.add.sprite(fireX, fireY, 'campfire_anim');
         campfire.play('campfire_anim');
-        campfire.setDepth(5 * TILE_SIZE + TILE_SIZE / 2);
+        campfire.setDepth(17 * TILE_SIZE + TILE_SIZE / 2);
     }
 
 }
